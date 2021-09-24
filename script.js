@@ -69,92 +69,152 @@ var shuffleCards = function (cardDeck) {
 }
 //re-assign card rank for ace, jack, queen, king
 function getRandomCard() {
-  var cardRandomNum = shuffledDeck.pop().rank
+  var cardRandomNum = shuffledDeck.pop().rank;
   if (cardRandomNum > 10) {
-      return 10
+      return 10;
   } else if (cardRandomNum === 1) {
-      return 11
-  } else {return cardRandomNum}
+      return 11;
+  } else {return cardRandomNum};
+};
+
+function playerSum(){
+  var playerSum = 0;
+  for (var i = 0; i < playerCardDeck.length; i++) {
+  playerSum += playerCardDeck[i]};
+  return playerSum;
 }
 
+function computerSum(){
+  var computerSum = 0;
+  for (var i = 0; i < computerCardDeck.length; i++) {
+  computerSum += computerCardDeck[i]};
+  return computerSum;
+}
+
+
+
 //global var
-var mode = `loading game`
-var shuffledDeck = shuffleCards(makeDeck())
-var playerCardDeck =[getRandomCard(), getRandomCard()]
-var computerCardDeck = [getRandomCard(), getRandomCard()]
-var ccardsEl = document.getElementById("ccards-el")
-var ctotalEl = document.getElementById("ctotal-el")
-var pcardsEl = document.getElementById("pcards-el")
-var ptotalEl = document.getElementById("ptotal-el")
-var player = ``
-var mode =`game loading`
+var shuffledDeck = shuffleCards(makeDeck());
+var playerCardDeck =[getRandomCard(), getRandomCard()];
+var computerCardDeck = [getRandomCard(), getRandomCard()];
+var ccardsEl = document.getElementById("ccards-el");
+var ctotalEl = document.getElementById("ctotal-el");
+var pcardsEl = document.getElementById("pcards-el");
+var ptotalEl = document.getElementById("ptotal-el");
+var player = ``;
+var mode =`loading game`;
 //Main function
 function main(input){
-  var myOutputValue =``
-  if(mode == `game loading`){
-    player = input
-    mode = `playerCardRenderEl`
-    myOutputValue = `Hello ${player}, welcome. Please press "Submit Button" to start the game.`
+  var myOutputValue =``;
+  if(mode == `loading game`){
+    player = input;
+    mode = `playerCardRenderEl`;
+    myOutputValue = `Hello ${player}, welcome. Please press "Submit Button" to start the game.`;
   }else if (mode == `playerCardRenderEl`){
-    myOutputValue = playerCardRender(input)
+    myOutputValue = playerCardRender(input);
   }else if (mode == `paddNewCardEl`){
-    myOutputValue = addNewCard(input)
+    myOutputValue = paddNewCard(input);
   }else if (mode == `computerCardRenderEl`){
-    console.log(mode)
-    myOutputValue = computerCardRender()
-  }
+    myOutputValue = computerCardRender();
+  }else if (mode == `caddNewCardEl`){
+    myOutputValue = caddNewCard();
+  }else if (mode == `scoreCompareEl`){
+    myOutputValue = scoreCompare();
+  }else if (mode == `loading game`){
+    myOutputValue = main()
+  };
 
   return myOutputValue
 }
 
 function playerCardRender(input){
-  var playerSum = 0
+  ptotalEl.innerHTML = "Player Sum: " + playerSum();
+  pcardsEl.innerHTML = `Player Cards:` + " " + '';
   for (var i = 0; i < playerCardDeck.length; i++) {
-    playerSum += playerCardDeck[i]}
-    ptotalEl.textContent = "Player Sum: " + playerSum
-    // for (var i = 0; i < playerCardDeck.length; i++) {
-   // pcardsEl.textContent += playerCardDeck[i] + " - "}
-  if (playerSum <=20){
-    myOutputValue = `Do you want to draw a new card?(Y/N)`
-  }else if (playerSum == 21){
-    myOutputValue = `You got a blackjack!`
-  }else if (playerSum > 21){
-    myOutputValue = `You out of the game`
-  }
-  mode = `paddNewCardEl`
-  return myOutputValue
+  pcardsEl.innerHTML += playerCardDeck[i] + " - "};
+  if (playerSum() <=20){
+  mode = `paddNewCardEl`;
+  myOutputValue = `Do you want to draw a new card?(Y/N)`;
+
+  }else if (playerSum() == 21){
+  mode = `scoreCompareEl`;
+  myOutputValue = `Got a blackjack! Press "Submit" button to proceed`;
+  }else if (playerSum() > 21){
+  mode = `scoreCompareEl`;
+  myOutputValue = `Computer out of the game! Press "Submit" button to proceed`
+  };
+  // mode = `addNewCardEl`
+  return myOutputValue;
 }
 
 function computerCardRender(){
-  if (computerSum <=17){
-    myOutputValue = addNewCard()
-  }else if (computerSum <= 20){
-    myOutputValue = `need a new card? `
-  }else if (computerSum == 21){
-    myOutputValue = `Computer got a blackjack!`
-  }else if (computerSum > 21){
-    myOutputValue = `Computer out of the game`
-  }
+  ctotalEl.innerHTML = "Computer Sum: " + computerSum();
+  ccardsEl.innerHTML = `Computer Cards:` + " " + '';
+  for (var i = 0; i < computerCardDeck.length; i++) {
+  ccardsEl.innerHTML += computerCardDeck[i] + " - "};
+    if (computerSum() <=17){
+    mode = `caddNewCardEl`;
+    myOutputValue = `Less than 17. Press "Submit" button to draw card`;
+  }else if (computerSum() <= 20) {
+    mode = `caddNewCardEl`;
+    myOutputValue = `Total: ${computerSum()}, do you want to draw card? (Y/N) `;
+  }else if (computerSum() == 21){
+    mode = `scoreCompareEl`;
+    myOutputValue = `Got a blackjack! Press "Submit" button to proceed`;
+  }else if (computerSum() > 21){
+    mode = `scoreCompareEl`;
+    myOutputValue = `The player won! Computer out of the game! Press "Submit" button to proceed`
+  };
+  
   return myOutputValue
 }
 
-function addNewCard(input){
-  var myOutputValue =``
+function paddNewCard(input){
+  var myOutputValue =``;
   if (mode == `paddNewCardEl` && input == `Y`){
-    playerCardDeck.push(getRandomCard())
-    mode = `playerCardRenderEl`
-    myOutputValue = `please press Sumit button to proceed`
-  }else if (mode == `caddNewCardEl`){
-    computerCardDeck.push(getRandomCard())
+    playerCardDeck.push(getRandomCard());
+    mode = `playerCardRenderEl`;
+    myOutputValue = `please press Sumit button to proceed`;
+  }else if (mode == `paddNewCardEl` && input == `N`){
+    mode = `computerCardRenderEl`;
+    myOutputValue = `Please press Submit button to proceed`;
   }
+  return myOutputValue;
+}
 
-  return myOutputValue
+
+function caddNewCard(input){
+  var myOutputValue =``;
+  if (mode == `caddNewCardEl`){
+    computerCardDeck.push(getRandomCard());
+    mode = `computerCardRenderEl`;
+    myOutputValue = `please press Sumit button to proceed`;
+  }else if (mode == `caddNewCardEl` && input == `Y`){
+    computerCardDeck.push(getRandomCard());
+    mode = `computerCardRenderEl`;
+    myOutputValue = `please press Sumit button to proceed`;
+  }else if (mode == `caddNewCardEl` && input == `N`){
+    mode = `scoreCompareEl`;
+    myOutputValue = `please press Sumit button to proceed`;
+  }
+  return myOutputValue;
 }
 
 function scoreCompare(){
-
-hasBlackJack = true
-isAlive = false
-
-  return myOutputValue
+  if (computerSum() <= 21 && playerSum() <= 21){
+    computerSum() >= playerSum();
+    myOutputValue = `Computer won`;
+    mode = `loading game`;
+  }else { myOutputValue = `Player won`
+mode = `loading game`};
+  console.log(`ComputerSum:`)
+  console.log(computerSum())
+  console.log(`PlayerSum:`)
+  console.log(playerSum())
+  return myOutputValue;
 }
+
+
+
+
+
